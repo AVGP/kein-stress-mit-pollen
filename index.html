@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Chat Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="css/leaflet.ie.css" />
+    <![endif]-->
+    <script src="js/leaflet.js"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map = L.map('map').setView([47.367347, 8.5500025], 13);
+      L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+        maxZoom: 18
+      }).addTo(map);
+      
+      var drawTrees = function(trees) {
+        var COLORS = {
+          Betula: '#f03',
+          Alnus: '#30f'
+            
+        };          
+          
+        for(var i=0; i < trees.length; i++) {
+          var treeColor = COLORS[trees[i].Baumgattung];
+          L.circle([trees[i].lat, trees[i].lon], 5, {
+            color:       treeColor,
+            fillColor:   treeColor,
+            fillOpacity: 0.5
+          }).addTo(map);
+        }
+      };
+      
+      var handleResult = function() {
+        console.log("LOADING");
+        var t_start = new Date().getTime();
+          
+        var trees = JSON.parse(this.responseText).result;
+        drawTrees(trees);
+          
+        console.log("DONE", new Date().getTime() - t_start);
+      };
+      
+      //Here the magic happens:
+      (function() {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = handleResult;
+        xhr.open('post', 'https://data.mingle.io/');
+        xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ["Betula", "Alnus"], tree.Baumgattung == allergenic ]'})); //'expr=' + encodeURIComponent('[ tree | tree <- ch_zh_baumkataster, allergenic <- ["Betula", "Alnus"], tree.Baumgattung == allergenic ]'));
+      })();
+      
+    </script>
+  </body>
+</html>
