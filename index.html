@@ -16,16 +16,16 @@
     
       //Depending on the level of allergic potential, the base Radius is either 15 (very strong), 10 (strong), 5 (medium) or 2 (low)
       var TREE_SPECS = {
-        Betula:   { color: '#f03', baseRadius: 15 },
-        Alnus:    { color: '#30f', baseRadius: 10 },
-        Corylus:  { color: '#3f0', baseRadius: 10 },
-        Fraxinus: { color: '#cc3', baseRadius: 10 },
-        Fagus:    { color: '#3cf', baseRadius:  5 },
-        Quercus:  { color: '#c3f', baseRadius:  5 },
-        Carpinus: { color: '#8f8', baseRadius:  5 },
-      };          
-    
-    
+        Betula:   { name: "Birke", color: '#f03', baseRadius: 15 },
+        Alnus:    { name: "Erle",  color: '#30f', baseRadius: 10 },
+        Corylus:  { name: "Hasel", color: '#3f0', baseRadius: 10 },
+        Fraxinus: { name: "Esche", color: '#cc3', baseRadius: 10 },
+        Fagus:    { name: "Buche", color: '#3cf', baseRadius:  5 },
+        Quercus:  { name: "Eiche", color: '#c3f', baseRadius:  5 },
+        Salix:    { name: "Weide", color: '#efd', baseRadius:  2 }
+      };
+
+
       var map = L.map('map').setView([47.367347, 8.5500025], 13);
       L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
