@@ -13,6 +13,19 @@
   <body>
     <div id="map"></div>
     <script>
+    
+      //Depending on the level of allergic potential, the base Radius is either 15 (very strong), 10 (strong), 5 (medium) or 2 (low)
+      var TREE_SPECS = {
+        Betula:   { color: '#f03', baseRadius: 15 },
+        Alnus:    { color: '#30f', baseRadius: 10 },
+        Corylus:  { color: '#3f0', baseRadius: 10 },
+        Fraxinus: { color: '#cc3', baseRadius: 10 },
+        Fagus:    { color: '#3cf', baseRadius:  5 },
+        Quercus:  { color: '#c3f', baseRadius:  5 },
+        Carpinus: { color: '#8f8', baseRadius:  5 },
+      };          
+    
+    
       var map = L.map('map').setView([47.367347, 8.5500025], 13);
       L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
@@ -20,15 +33,9 @@
       }).addTo(map);
       
       var drawTrees = function(trees) {
-        var COLORS = {
-          Betula: '#f03',
-          Alnus: '#30f'
-            
-        };          
-          
         for(var i=0; i < trees.length; i++) {
-          var treeColor = COLORS[trees[i].Baumgattung];
-          L.circle([trees[i].lat, trees[i].lon], 5, {
+          var treeColor = TREE_SPECS[trees[i].Baumgattung].color
+          L.circle([trees[i].lat, trees[i].lon], TREE_SPECS[trees[i].Baumgattung].baseRadius, {
             color:       treeColor,
             fillColor:   treeColor,
             fillOpacity: 0.5
@@ -49,9 +56,12 @@
       //Here the magic happens:
       (function() {
         var xhr = new XMLHttpRequest();
+        var treeNames = [];
+        for(treeName in TREE_SPECS) { treeNames.push(treeName); };
+        
         xhr.onload = handleResult;
         xhr.open('post', 'https://data.mingle.io/');
-        xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ["Betula", "Alnus"], tree.Baumgattung == allergenic ]'})); //'expr=' + encodeURIComponent('[ tree | tree <- ch_zh_baumkataster, allergenic <- ["Betula", "Alnus"], tree.Baumgattung == allergenic ]'));
+        xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ' + JSON.stringify(treeNames) + ', tree.Baumgattung == allergenic ]'})); //'expr=' + encodeURIComponent('[ tree | tree <- ch_zh_baumkataster, allergenic <- ["Betula", "Alnus"], tree.Baumgattung == allergenic ]'));
       })();
       
     </script>
