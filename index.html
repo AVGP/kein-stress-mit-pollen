@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="pollen">
   <head>
     <title>Kein Stress mit Pollen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,8 @@
         <link rel="stylesheet" href="css/leaflet.ie.css" />
     <![endif]-->
     <script src="js/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <script src="js/app.js"></script>
   </head>
   <body>
     <div id="map"></div>
@@ -17,13 +19,13 @@
     
       //Depending on the level of allergic potential, the base Radius is either 15 (very strong), 10 (strong), 5 (medium) or 2 (low)
       var TREE_SPECS = {
-        Betula:   { name: "Birke", color: '#f03', baseRadius: 15 },
-        Alnus:    { name: "Erle",  color: '#30f', baseRadius: 10 },
-        Corylus:  { name: "Hasel", color: '#3f0', baseRadius: 10 },
-        Fraxinus: { name: "Esche", color: '#83c', baseRadius: 10 },
-        Fagus:    { name: "Buche", color: '#3cf', baseRadius:  5 },
-        Quercus:  { name: "Eiche", color: '#c3f', baseRadius:  5 },
-        Salix:    { name: "Weide", color: '#aa6', baseRadius:  2 }
+        Betula:   { name: "Birke", color: '#f03', baseRadius: 30 },
+        Alnus:    { name: "Erle",  color: '#30f', baseRadius: 15 },
+        Corylus:  { name: "Hasel", color: '#3f0', baseRadius: 15 },
+        Fraxinus: { name: "Esche", color: '#83c', baseRadius: 15 },
+        Fagus:    { name: "Buche", color: '#3cf', baseRadius:  7 },
+        Quercus:  { name: "Eiche", color: '#c3f', baseRadius:  7 },
+        Salix:    { name: "Weide", color: '#aa6', baseRadius:  1 }
       };
 
       for(treeType in TREE_SPECS) {
@@ -36,22 +38,29 @@
         maxZoom: 18
       }).addTo(map);
       
+      var addTreeToMap = function(tree) {
+          window.requestAnimationFrame(function() {
+            var treeColor = TREE_SPECS[tree.Baumgattung].color
+            L.circle([tree.lat, tree.lon], TREE_SPECS[tree.Baumgattung].baseRadius, {
+              color:       treeColor,
+              fillColor:   treeColor,
+              fillOpacity: 0.5
+            }).addTo(map);
+          });          
+      };
+      
       var drawTrees = function(trees) {
         for(var i=0; i < trees.length; i++) {
-          var treeColor = TREE_SPECS[trees[i].Baumgattung].color
-          L.circle([trees[i].lat, trees[i].lon], TREE_SPECS[trees[i].Baumgattung].baseRadius, {
-            color:       treeColor,
-            fillColor:   treeColor,
-            fillOpacity: 0.5
-          }).addTo(map);
+          addTreeToMap(trees[i]);
         }
       };
       
       var handleResult = function() {
         console.log("LOADING");
         var t_start = new Date().getTime();
-          
         var trees = JSON.parse(this.responseText).result;
+        console.log("PARSED", new Date().getTime() - t_start);  
+        
         drawTrees(trees);
           
         console.log("DONE", new Date().getTime() - t_start);
