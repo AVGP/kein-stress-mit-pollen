@@ -6,15 +6,12 @@ angular.module('starter.controllers', [])
 .controller('PrognosisCtrl', function($scope) {
 })
 
-.controller('SettingsCtrl', function($scope) {
-    $scope.allergies = {
-        birke: true,
-        erle:  false,
-        esche: false,
-        hasel: false
-    };
+.controller('SettingsCtrl', function($scope, Settings) {
+  var settings = Settings.load();
+    $scope.allergies = settings.allergies || {};
     
     $scope.save = function() {
       console.log($scope.allergies);
+      Settings.save('allergies', $scope.allergies);
     };
 });

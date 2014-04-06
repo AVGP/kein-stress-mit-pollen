@@ -4,9 +4,15 @@ angular.module('starter.services', [])
   var self     = {},
       settings = null;
   
-  self.save = function() {
+  self.save = function(key, value) {
     if(settings == null) {
       self.load();
+    }
+    
+    if(key) {
+      settings[key] = value;
+    } else {
+      settings = value;
     }
     
     window.localStorage.setItem("pollenkarte", JSON.stringify(settings));
