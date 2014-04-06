@@ -1,0 +1,62 @@
+<ion-view title="Einstellungen">
+  <ion-content class="has-header padding">
+
+    <!-- Marker settings (enable/disable) -->
+    <div class="card">
+      <div class="item item-divider">
+        Pollenarten
+      </div>
+      <div class="item item-text-wrap">
+        <h2>Auf welche Pollen bist du allergisch?</h2>
+        <ul class="list">
+
+          <li class="item item-toggle">
+            Birke
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.birke" ng-checked="allergies.birke">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+          <li class="item item-toggle">
+            Erle
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.erle" ng-checked="allergies.erle">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+          <li class="item item-toggle">
+            Esche
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.esche" ng-checked="allergies.esche">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+          <li class="item item-toggle">
+            Hasel
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.hasel" ng-checked="allergies.hasel">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+        </ul>
+        <div class="padding">
+          <button class="button button-block button-positive" ng-click="save()">Save changes</button>
+        </div>
+      </div>
+    </div>
+    
+    
+  </ion-content>
+</ion-view>
