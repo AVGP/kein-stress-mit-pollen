@@ -20,7 +20,14 @@ angular.module('starter.services', [])
   
   self.load = function() {
     try {
-      settings = JSON.parse(window.localStorage.getItem("pollenkarte")) || {};
+      settings = JSON.parse(window.localStorage.getItem("pollenkarte")) || {
+        allergies: {
+          Betula:   true,
+          Alnus:    true,
+          Corylus:  true,
+          Fraxinus: true
+        }
+      };
     } catch(e) {
       settings = {};
     }
