@@ -11,14 +11,31 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PrognosisCtrl', function($scope) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', 'http://cors.io/www.pollenundallergie.ch/infos-zu-pollen-und-allergien/MeteoSchweiz/pollenprognose/?oid=1828&lang=de', true);
+  xhr.responseType = 'document';
+  xhr.onload = function() {
+    var prognosis = this.response.querySelector('.prognosetext').textContent;
+    $scope.$apply(function() {
+      $scope.prognosis = prognosis;
+    });
+  }
+  xhr.onerror = function() {
+    console.log('err', this.error);
+  }
+  xhr.send();
 })
 
-.controller('SettingsCtrl', function($scope, Settings) {
+.controller('SettingsCtrl', function($scope, Settings, Trees) {
   var settings = Settings.load();
-    $scope.allergies = settings.allergies || {};
-    
-    $scope.save = function() {
-      console.log($scope.allergies);
-      Settings.save('allergies', $scope.allergies);
-    };
+  $scope.allergies = settings.allergies || {};
+  $scope.loading = false;
+  
+  $scope.save = function() {
+    $scope.loading = true;
+    Settings.save('allergies', $scope.allergies);
+    Trees.load(function() {
+      $scope.$apply(function() { $scope.loading = false; });
+    })
+  };
 });
