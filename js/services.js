@@ -51,30 +51,22 @@ angular.module('starter.services', [])
     Corylus:  { name: "Hasel", marker: 'img/markers/hasel.gif' },
     Fraxinus: { name: "Esche", marker: 'img/markers/esche.gif' }
   };
+  
+  TREES = TREES.result;
 
   var treeNames = [];
 
   self.load = function(callback) {
     allergies = Settings.load().allergies;
     
-    treeNames = [];
-    for(var treeName in TREE_SPECS) {
-      if(!TREE_SPECS.hasOwnProperty(treeName)) continue;
-
-      if(allergies[treeName]) {
-        treeNames.push(treeName);
+    trees = [];
+    for(var i=0; i<TREES.length; i++) {
+      if(allergies[TREES[i].Baumgattung]) {
+        trees.push(TREES[i]);
       }
     }
     
-    xhr.onload = function() {
-      trees = JSON.parse(this.responseText).result;
-      window.localStorage.setItem("pollenkarte.trees", JSON.stringify(trees));
-      console.log('loaded', targetMap, callback);
-      if(targetMap) self.display();
-      if(callback) callback();
-    };
-    xhr.open('post', 'https://data.mingle.io/');
-    xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ' + JSON.stringify(treeNames) + ', tree.Baumgattung == allergenic ]'}));
+    if(callback) callback();
   };
   
   self.load();

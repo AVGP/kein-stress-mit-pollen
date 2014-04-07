@@ -35,7 +35,7 @@ angular.module('starter.controllers', [])
     $scope.loading = true;
     Settings.save('allergies', $scope.allergies);
     Trees.load(function() {
-      $scope.$apply(function() { $scope.loading = false; });
+      $scope.loading = false;
     })
   };
 });
