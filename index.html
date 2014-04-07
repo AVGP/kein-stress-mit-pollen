@@ -1,69 +1,51 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
   <head>
-    <title>Kein Stress mit Pollen</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/leaflet.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="css/leaflet.ie.css" />
-    <![endif]-->
-    <script src="js/leaflet.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Pollenkarte</title>
+
+    <link rel="shortcut icon" href="img/icons/icon128.png">
+    <link rel="apple-touch-icon" href="img/icons/icon128.png">
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <script type="text/javascript" src="lib/markerclusterer_compiled.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/services.js"></script>
   </head>
-  <body>
-    <div id="map"></div>
-    <script>
-    
-      //Depending on the level of allergic potential, the base Radius is either 15 (very strong), 10 (strong), 5 (medium) or 2 (low)
-      var TREE_SPECS = {
-        Betula:   { color: '#f03', baseRadius: 15 },
-        Alnus:    { color: '#30f', baseRadius: 10 },
-        Corylus:  { color: '#3f0', baseRadius: 10 },
-        Fraxinus: { color: '#cc3', baseRadius: 10 },
-        Fagus:    { color: '#3cf', baseRadius:  5 },
-        Quercus:  { color: '#c3f', baseRadius:  5 },
-        Carpinus: { color: '#8f8', baseRadius:  5 },
-      };          
-    
-    
-      var map = L.map('map').setView([47.367347, 8.5500025], 13);
-      L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-        maxZoom: 18
-      }).addTo(map);
-      
-      var drawTrees = function(trees) {
-        for(var i=0; i < trees.length; i++) {
-          var treeColor = TREE_SPECS[trees[i].Baumgattung].color
-          L.circle([trees[i].lat, trees[i].lon], TREE_SPECS[trees[i].Baumgattung].baseRadius, {
-            color:       treeColor,
-            fillColor:   treeColor,
-            fillOpacity: 0.5
-          }).addTo(map);
-        }
-      };
-      
-      var handleResult = function() {
-        console.log("LOADING");
-        var t_start = new Date().getTime();
-          
-        var trees = JSON.parse(this.responseText).result;
-        drawTrees(trees);
-          
-        console.log("DONE", new Date().getTime() - t_start);
-      };
-      
-      //Here the magic happens:
-      (function() {
-        var xhr = new XMLHttpRequest();
-        var treeNames = [];
-        for(treeName in TREE_SPECS) { treeNames.push(treeName); };
-        
-        xhr.onload = handleResult;
-        xhr.open('post', 'https://data.mingle.io/');
-        xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ' + JSON.stringify(treeNames) + ', tree.Baumgattung == allergenic ]'})); //'expr=' + encodeURIComponent('[ tree | tree <- ch_zh_baumkataster, allergenic <- ["Betula", "Alnus"], tree.Baumgattung == allergenic ]'));
-      })();
-      
-    </script>
+  <body ng-app="starter" animation="slide-left-right-ios7">
+    <!-- 
+      The nav bar that will be updated as we navigate between views.
+    -->
+    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+      <ion-nav-back-button class="button-icon icon ion-chevron-left">
+        Back
+      </ion-nav-back-button>
+    </ion-nav-bar>
+    <!-- 
+      The views will be rendered in the <ion-nav-view> directive below
+      Templates are in the /templates folder (but you could also
+      have templates inline in this html file if you'd like).
+    -->
+    <ion-nav-view></ion-nav-view>
   </body>
 </html>

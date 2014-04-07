@@ -1,0 +1,66 @@
+<ion-view title="Einstellungen">
+  <ion-content class="has-header padding">
+
+    <!-- Marker settings (enable/disable) -->
+    <div class="card">
+      <div class="item item-divider">
+        Pollenarten
+      </div>
+      <div class="item item-text-wrap">
+        <h2>Auf welche Pollen bist du allergisch?</h2>
+        <ul class="list">
+
+          <li class="item item-toggle">
+            Birke
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.Betula" ng-checked="allergies.Betula">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+          <li class="item item-toggle">
+            Erle
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.Alnus" ng-checked="allergies.Alnus">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+          <li class="item item-toggle">
+            Esche
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.Fraxinus" ng-checked="allergies.Fraxinus">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+          <li class="item item-toggle">
+            Hasel
+            <label class="toggle">
+              <input type="checkbox" ng-model="allergies.Corylus" ng-checked="allergies.Corylus">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </li>
+
+        </ul>
+        <div class="padding" style="text-align: center">
+          <button class="button button-block button-positive" ng-click="save()">Save changes</button>
+          <img src="img/loader.gif" ng-show="loading">
+        </div>
+      </div>
+    </div>
+    
+    <div class="item item-text-wrap">
+      The icons are provided by <a target="_blank" href="http://www.icons8.com">icons8</a> as Creative Commons Attribution-NoDerivs 3.0 Unported.
+    </div>
+    
+  </ion-content>
+</ion-view>
