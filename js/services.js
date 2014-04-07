@@ -39,52 +39,89 @@ angular.module('starter.services', [])
       targetMap = null;
 
   var TREE_SPECS = {
-    Betula:   { name: "Birke", color: '#f03', baseRadius: 30 },
-    Alnus:    { name: "Erle",  color: '#30f', baseRadius: 15 },
-    Corylus:  { name: "Hasel", color: '#3f0', baseRadius: 15 },
-    Fraxinus: { name: "Esche", color: '#83c', baseRadius: 15 },
-    Fagus:    { name: "Buche", color: '#3cf', baseRadius:  7 },
-    Quercus:  { name: "Eiche", color: '#c3f', baseRadius:  7 },
-    Salix:    { name: "Weide", color: '#aa6', baseRadius:  1 }
+    Betula:   { name: "Birke", marker: 'img/markers/birke.gif' },
+    Alnus:    { name: "Erle",  marker: 'img/markers/erle.gif'  },
+    Corylus:  { name: "Hasel", marker: 'img/markers/hasel.gif' },
+    Fraxinus: { name: "Esche", marker: 'img/markers/esche.gif' }
   };
 
   var treeNames = [];
-  for(var treeName in TREE_SPECS) {
-    if(!TREE_SPECS.hasOwnProperty(treeName)) continue;
 
-    if(allergies[treeName]) {
-      treeNames.push(treeName);
+  self.load = function(callback) {
+    allergies = Settings.load().allergies;
+    
+    treeNames = [];
+    for(var treeName in TREE_SPECS) {
+      if(!TREE_SPECS.hasOwnProperty(treeName)) continue;
+
+      if(allergies[treeName]) {
+        treeNames.push(treeName);
+      }
     }
-  }
-
-  xhr.onload = function() {
-    trees = JSON.parse(this.responseText).result;
-    console.log(trees);
-    self.display();
+    
+    xhr.onload = function() {
+      trees = JSON.parse(this.responseText).result;
+      window.localStorage.setItem("pollenkarte.trees", JSON.stringify(trees));
+      console.log('loaded', targetMap, callback);
+      if(targetMap) self.display();
+      if(callback) callback();
+    };
+    xhr.open('post', 'https://data.mingle.io/');
+    xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ' + JSON.stringify(treeNames) + ', tree.Baumgattung == allergenic ]'}));
   };
-  xhr.open('post', 'https://data.mingle.io/');
-  xhr.send(JSON.stringify({expr: '[ tree | tree <- ch_zh_baumkataster, allergenic <- ' + JSON.stringify(treeNames) + ', tree.Baumgattung == allergenic ]'}));
+  
+  self.load();
   
   self.setMap = function(map) {
     targetMap = map;
+    
+    if(trees) self.display();
   }
   
   self.display = function() {
-    window.markers = [];
+    var clusters = {};
     for(var i=0;i<trees.length;i++) {
       var tree = trees[i];
-      var options = {
-        strokeColor: TREE_SPECS[tree.Baumgattung].color,
-        strokeOpacity: 0.8,
-        strokeWeight: 1,
-        fillColor: TREE_SPECS[tree.Baumgattung].color,
-        fillOpacity: 0.5,
-        map: targetMap,
-        center: new google.maps.LatLng(tree.lat, tree.lon),
-        radius: TREE_SPECS[tree.Baumgattung].baseRadius
-      };
-      console.log(options);
-      window.markers.push(new google.maps.Circle(options));
+      if(!allergies[tree.Baumgattung]) continue;
+      
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(tree.lat, tree.lon),
+        icon: TREE_SPECS[tree.Baumgattung].marker,
+        title: TREE_SPECS[tree.Baumgattung].name
+      });
+      
+      clusters[tree.Baumgattung] = clusters[tree.Baumgattung] || [];
+      clusters[tree.Baumgattung].push(marker);
+    }
+    
+    for(var type in clusters) {
+      if(!clusters.hasOwnProperty(type)) continue;
+      
+      var clusterStyles = [
+        {
+          textColor: (type == 'Alnus' ? 'black' : 'white'),
+          url: 'img/markers/' + TREE_SPECS[type].name.toLowerCase() + '-cluster.gif',
+          height: 32,
+          width: 32,
+          anchorText: [-5, 0]
+        },
+        {
+          textColor: (type == 'Alnus' ? 'black' : 'white'),
+          url: 'img/markers/' + TREE_SPECS[type].name.toLowerCase() + '-cluster.gif',
+          height: 32,
+          width: 32,
+          anchorText: [-5, 0]
+        },
+        {
+          textColor: (type == 'Alnus' ? 'black' : 'white'),
+          url: 'img/markers/' + TREE_SPECS[type].name.toLowerCase() + '-cluster.gif',
+          height: 32,
+          width: 32,
+          anchorText: [-5, 0]
+        }
+      ];
+      
+      new MarkerClusterer(targetMap, clusters[type], {styles: clusterStyles});
     }
   };
   
