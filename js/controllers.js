@@ -26,7 +26,7 @@ angular.module('starter.controllers', [])
   xhr.send();
 })
 
-.controller('SettingsCtrl', function($scope, Settings, Trees) {
+.controller('SettingsCtrl', function($scope, Settings, $state, Trees) {
   var settings = Settings.load();
   $scope.allergies = settings.allergies || {};
   $scope.loading = false;
@@ -36,6 +36,7 @@ angular.module('starter.controllers', [])
     Settings.save('allergies', $scope.allergies);
     Trees.load(function() {
       $scope.loading = false;
+      $state.go('tab.map');
     })
   };
 });
