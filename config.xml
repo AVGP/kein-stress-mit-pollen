@@ -7,7 +7,7 @@
     <access origin="*" />
     
     <icon src="img/icons/icon256.png" />
-    
+    <preference name="phonegap-version" value="3.6.3" />
     <preference name="load-url-timeout" value="120000" />
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="false" />
